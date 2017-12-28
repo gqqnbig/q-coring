@@ -1,0 +1,776 @@
+﻿# add_state_modifier = { modifier = { local_non_core_manpower = 0.18 } }
+
+add_namespace = cor_sta
+
+#starting integration
+country_event = {
+	id = cor_sta.1
+	fire_only_once = no
+	mean_time_to_happen = { days = 1 }
+	hidden = no
+	
+	title = cor_sta.1.t
+	desc = cor_sta.1.d
+	
+	trigger = {
+		any_state = {
+			AND = {
+				is_controlled_by = FROM
+				NOT = { is_core_of = FROM }
+				if = {
+					LIMIT = { 
+						NOT = { is_owned_by = FROM }
+					}
+					all_neighbor_state = {
+						is_controlled_by = FROM
+					}
+				}
+				OR = {
+					any_neighbor_state = {
+						OR = {
+							is_core_of = FROM
+							has_state_flag = integrated_by_@FROM
+						}
+					}
+					AND = {
+						is_coastal = yes
+						FROM = {
+							any_owned_state = {
+								AND = {
+									is_core_of = FROM
+									is_coastal = yes
+								}
+							}
+						}
+					}
+				}
+				AND = {
+					NOT = { has_state_flag = integrated_by_@FROM }
+					NOT = { has_state_flag = fast_integration_@FROM }
+					NOT = { has_state_flag = normal_integration_@FROM }
+					NOT = { has_state_flag = slow_integration_@FROM }
+				}
+			}
+		}
+	}
+	
+	option = { #fast integration
+		trigger = {
+			AND = {
+				has_political_power > 29
+				OR = {
+					is_ai = no
+					has_political_power > 299
+				}
+			}
+		}
+		name = cor_sta.1.a
+		random_state = {
+			limit = {
+				AND = {
+					is_controlled_by = FROM
+					NOT = { is_core_of = FROM }
+					if = {
+						LIMIT = { 
+							NOT = { is_owned_by = FROM }
+						}
+						all_neighbor_state = {
+							is_controlled_by = FROM
+						}
+					}
+					OR = {
+						any_neighbor_state = {
+							OR = {
+								is_core_of = FROM
+								has_state_flag = integrated_by_@FROM
+							}
+						}
+						AND = {
+							is_coastal = yes
+							FROM = {
+								any_owned_state = {
+									AND = {
+										is_core_of = FROM
+										is_coastal = yes
+									}
+								}
+							}
+						}
+					}
+					AND = {
+						NOT = { has_state_flag = integrated_by_@FROM }
+						NOT = { has_state_flag = fast_integration_@FROM }
+						NOT = { has_state_flag = normal_integration_@FROM }
+						NOT = { has_state_flag = slow_integration_@FROM }
+					}
+				}
+			}
+			set_state_flag = fast_integration_@FROM
+			custom_effect_tooltip = cor_sta.1.a.t
+		}
+	}
+	
+	option = { #normal integration
+		trigger = {
+			AND = {
+				has_political_power > 9
+				OR = {
+					is_ai = no
+					has_political_power > 199
+				}
+			}
+		}
+		name = cor_sta.1.b
+		random_state = {
+			limit = {
+				AND = {
+					is_controlled_by = FROM
+					NOT = { is_core_of = FROM }
+					AND = {
+						NOT = { has_state_flag = integrated_by_@FROM }
+						NOT = { has_state_flag = fast_integration_@FROM }
+						NOT = { has_state_flag = normal_integration_@FROM }
+						NOT = { has_state_flag = slow_integration_@FROM }
+					}
+					if = {
+						LIMIT = { 
+							NOT = { is_owned_by = FROM }
+						}
+						all_neighbor_state = {
+							is_controlled_by = FROM
+						}
+					}
+					OR = {
+						any_neighbor_state = {
+							OR = {
+								is_core_of = FROM
+								has_state_flag = integrated_by_@FROM
+							}
+						}
+						AND = {
+							is_coastal = yes
+							FROM = {
+								any_owned_state = {
+									AND = {
+										is_core_of = FROM
+										is_coastal = yes
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			set_state_flag = normal_integration_@FROM
+			custom_effect_tooltip = cor_sta.1.b.t
+		}
+	}
+	
+	option = { #slow integration
+		name = cor_sta.1.c
+		random_state = {
+			limit = {
+				AND = {
+					is_controlled_by = FROM
+					NOT = { is_core_of = FROM }
+					AND = {
+						NOT = { has_state_flag = integrated_by_@FROM }
+						NOT = { has_state_flag = fast_integration_@FROM }
+						NOT = { has_state_flag = normal_integration_@FROM }
+						NOT = { has_state_flag = slow_integration_@FROM }
+					}
+					if = {
+						LIMIT = { 
+							NOT = { is_owned_by = FROM }
+						}
+						all_neighbor_state = {
+							is_controlled_by = FROM
+						}
+					}
+					OR = {
+						any_neighbor_state = {
+							OR = {
+								is_core_of = FROM
+								has_state_flag = integrated_by_@FROM
+							}
+						}
+						AND = {
+							is_coastal = yes
+							FROM = {
+								any_owned_state = {
+									AND = {
+										is_core_of = FROM
+										is_coastal = yes
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			set_state_flag = slow_integration_@FROM
+			custom_effect_tooltip = cor_sta.1.c.t
+		}
+	}
+}
+
+#integration
+country_event = {
+	id = cor_sta.2
+	fire_only_once = no
+	mean_time_to_happen = { days = 1 }
+	hidden = no
+	
+	title = cor_sta.2.t
+	desc = cor_sta.2.d
+	
+	trigger = {
+		any_state = {
+			AND = {
+				is_controlled_by = FROM
+				OR = {
+					has_state_flag = {
+						flag = fast_integration_@FROM
+						days >50
+					}
+					has_state_flag = {
+						flag = normal_integration_@FROM
+						days >110
+					}
+					has_state_flag = {
+						flag = slow_integration_@FROM
+						days >230
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = cor_sta.2.a
+		
+		trigger = {
+			any_state = {
+				AND = {
+					is_controlled_by = FROM
+					has_state_flag = {
+						flag = fast_integration_@FROM
+						days >50
+					}
+				}
+			}
+		}
+		
+		every_state = {
+			limit = {
+				AND = {
+					is_controlled_by = FROM
+					has_state_flag = {
+						flag = fast_integration_@FROM
+						days >50
+					}
+				}
+			}
+			if {
+				limit = {
+					NOT = { has_state_flag = integ_bonus }
+				}
+				add_state_modifier = { modifier = { local_non_core_manpower = 0.18 } }
+				set_state_flag = integ_bonus
+			}
+			set_state_flag = integrated_by_@FROM
+			clr_state_flag = fast_integration_@FROM
+		}
+		add_political_power = -15
+	}
+
+	option = {
+		name = cor_sta.2.a
+		
+		trigger = {
+			any_state = {
+				AND = {
+					is_controlled_by = FROM
+					has_state_flag = {
+						flag = normal_integration_@FROM
+						days >110
+					}
+				}
+			}
+		}
+		
+		every_state = {
+			limit = {
+				AND = {
+					is_controlled_by = FROM
+					has_state_flag = {
+						flag = normal_integration_@FROM
+						days >110
+					}
+				}
+			}
+			if {
+				limit = {
+					NOT = { has_state_flag = integ_bonus }
+				}
+				add_state_modifier = { modifier = { local_non_core_manpower = 0.18 } }
+				set_state_flag = integ_bonus
+			}
+			set_state_flag = integrated_by_@FROM
+			clr_state_flag = normal_integration_@FROM
+		}
+		add_political_power = -5
+	}
+
+	option = {
+		name = cor_sta.2.a
+		
+		trigger = {
+			any_state = {
+				AND = {
+					is_controlled_by = FROM
+					has_state_flag = {
+						flag = slow_integration_@FROM
+						days >230
+					}
+				}
+			}
+		}
+		
+		every_state = {
+			limit = {
+				AND = {
+					is_controlled_by = FROM
+					has_state_flag = {
+						flag = slow_integration_@FROM
+						days >230
+					}
+				}
+			}
+			if {
+				limit = {
+					NOT = { has_state_flag = integ_bonus }
+				}
+				add_state_modifier = { modifier = { local_non_core_manpower = 0.18 } }
+				set_state_flag = integ_bonus
+			}
+			set_state_flag = integrated_by_@FROM
+			clr_state_flag = slow_integration_@FROM
+		}
+	}
+}
+
+#starting coring
+country_event = {
+	id = cor_sta.3
+	fire_only_once = no
+	mean_time_to_happen = {
+		days = 1
+	}
+	hidden = no
+	
+	title = cor_sta.3.t
+	desc = cor_sta.3.d
+	
+	trigger = {
+		AND = {
+			OR = {
+				has_war = no
+				has_government = democratic
+			}
+
+			any_state = {
+				AND = {
+					is_owned_by = FROM
+					NOT = { is_core_of = FROM }
+					has_state_flag = integrated_by_@FROM
+					OR = {
+						any_neighbor_state = {
+							AND = {
+								is_core_of = FROM
+								is_owned_by = FROM
+							}
+						}
+						AND = {
+							is_coastal = yes
+							FROM = {
+								any_owned_state = {
+									AND = {
+										is_core_of = FROM
+										is_coastal = yes
+									}
+								}
+							}
+							all_neighbor_state = {
+								has_state_flag = integrated_by_@FROM
+								is_owned_by = FROM
+							}
+						}
+					}
+				#	any_neighbor_state = {
+				#		AND = {
+				#			is_core_of = FROM
+				#			is_owned_by = FROM
+				#		}
+				#	}
+					NOT = {
+						OR = {
+							has_state_flag = fast_coring_@FROM
+							has_state_flag = normal_coring_@FROM
+							has_state_flag = slow_coring_@FROM
+							has_state_flag = never_core_@FROM
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	option = { #fast coring
+		trigger = {
+			AND = {
+				has_political_power > 29
+				OR = {
+					is_ai = no
+					has_political_power > 299
+				}
+			}
+		}
+		name = cor_sta.3.a
+		random_owned_state = {
+			limit = {
+				AND = {
+					is_owned_by = FROM
+					NOT = { is_core_of = FROM }
+					has_state_flag = integrated_by_@FROM
+					OR = {
+						any_neighbor_state = {
+							AND = {
+								is_core_of = FROM
+								is_owned_by = FROM
+							}
+						}
+						AND = {
+							is_coastal = yes
+							FROM = {
+								any_owned_state = {
+									AND = {
+										is_core_of = FROM
+										is_coastal = yes
+									}
+								}
+							}
+							all_neighbor_state = {
+								has_state_flag = integrated_by_@FROM
+								is_owned_by = FROM
+							}
+						}
+					}
+					NOT = {
+						OR = {
+							has_state_flag = fast_coring_@FROM
+							has_state_flag = normal_coring_@FROM
+							has_state_flag = slow_coring_@FROM
+							has_state_flag = never_core_@FROM
+						}
+					}
+				}
+			}
+			custom_effect_tooltip = cor_sta.3.a.t
+			set_state_flag = fast_coring_@FROM
+		}
+	}
+	
+	option = { #normal coring
+		trigger = {
+			AND = {
+				has_political_power > 9
+				OR = {
+					is_ai = no
+					has_political_power > 199
+				}
+			}
+		}
+		name = cor_sta.3.b
+		random_owned_state = {
+			limit = {
+				AND = {
+					is_owned_by = FROM
+					NOT = { is_core_of = FROM }
+					has_state_flag = integrated_by_@FROM
+					OR = {
+						any_neighbor_state = {
+							AND = {
+								is_core_of = FROM
+								is_owned_by = FROM
+							}
+						}
+						AND = {
+							is_coastal = yes
+							FROM = {
+								any_owned_state = {
+									AND = {
+										is_core_of = FROM
+										is_coastal = yes
+									}
+								}
+							}
+							all_neighbor_state = {
+								has_state_flag = integrated_by_@FROM
+								is_owned_by = FROM
+							}
+						}
+					}
+					NOT = {
+						OR = {
+							has_state_flag = fast_coring_@FROM
+							has_state_flag = normal_coring_@FROM
+							has_state_flag = slow_coring_@FROM
+							has_state_flag = never_core_@FROM
+						}
+					}
+				}
+			}
+			set_state_flag = normal_coring_@FROM
+			custom_effect_tooltip = cor_sta.3.b.t
+		}
+	}
+	
+	option = { #slow coring
+		name = cor_sta.3.c
+		random_owned_state = {
+			limit = {
+				AND = {
+					is_owned_by = FROM
+					NOT = { is_core_of = FROM }
+					has_state_flag = integrated_by_@FROM
+					OR = {
+						any_neighbor_state = {
+							AND = {
+								is_core_of = FROM
+								is_owned_by = FROM
+							}
+						}
+						AND = {
+							is_coastal = yes
+							FROM = {
+								any_owned_state = {
+									AND = {
+										is_core_of = FROM
+										is_coastal = yes
+									}
+								}
+							}
+							all_neighbor_state = {
+								has_state_flag = integrated_by_@FROM
+								is_owned_by = FROM
+							}
+						}
+					}
+					NOT = {
+						OR = {
+							has_state_flag = fast_coring_@FROM
+							has_state_flag = normal_coring_@FROM
+							has_state_flag = slow_coring_@FROM
+							has_state_flag = never_core_@FROM
+						}
+					}
+				}
+			}
+			set_state_flag = slow_coring_@FROM
+			custom_effect_tooltip = cor_sta.3.c.t
+		}
+	}
+	
+	option = { #never core
+		name = cor_sta.3.d
+		random_owned_state = {
+			limit = {
+				AND = {
+					is_owned_by = FROM
+					NOT = { is_core_of = FROM }
+					has_state_flag = integrated_by_@FROM
+					OR = {
+						any_neighbor_state = {
+							AND = {
+								is_core_of = FROM
+								is_owned_by = FROM
+							}
+						}
+						AND = {
+							is_coastal = yes
+							FROM = {
+								any_owned_state = {
+									AND = {
+										is_core_of = FROM
+										is_coastal = yes
+									}
+								}
+							}
+							all_neighbor_state = {
+								has_state_flag = integrated_by_@FROM
+								is_owned_by = FROM
+							}
+						}
+					}
+					NOT = {
+						OR = {
+							has_state_flag = fast_coring_@FROM
+							has_state_flag = normal_coring_@FROM
+							has_state_flag = slow_coring_@FROM
+							has_state_flag = never_core_@FROM
+						}
+					}
+				}
+			}
+			set_state_flag = never_core_@FROM
+			custom_effect_tooltip = cor_sta.3.d.t
+		}
+	}
+}
+
+#coring
+country_event = {
+	id = cor_sta.4
+	fire_only_once = no
+	mean_time_to_happen = { days = 1 }
+	hidden = no
+	
+	title = cor_sta.4.t
+	desc = cor_sta.4.d
+	
+	trigger = {
+		any_state = {
+			AND = {
+				is_owned_by = FROM
+				OR = {
+					has_state_flag = {
+						flag = fast_coring_@FROM
+						days >80
+					}
+					has_state_flag = {
+						flag = normal_coring_@FROM
+						days >170
+					}
+					has_state_flag = {
+						flag = slow_coring_@FROM
+						days >350
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = cor_sta.4.a
+		
+		trigger = {
+			any_state = {
+				AND = {
+					is_controlled_by = FROM
+					has_state_flag = {
+						flag = fast_coring_@FROM
+						days >170
+					}
+				}
+			}
+		}
+		
+		every_state = {
+			limit = {
+				AND = {
+					is_controlled_by = FROM
+					has_state_flag = {
+						flag = fast_coring_@FROM
+						days >80
+					}
+
+				}
+			}
+			add_core_of = FROM
+			hidden_effect = {
+				add_state_modifier = { modifier = { local_non_core_manpower = -0.18 } }
+			}
+			clr_state_flag = integrated_by_@FROM
+			clr_state_flag = integ_bonus
+			clr_state_flag = fast_coring_@FROM
+		}
+		add_political_power = -30
+	}
+	
+	option = {
+		name = cor_sta.4.a
+		
+		trigger = {
+			any_state = {
+				AND = {
+					is_controlled_by = FROM
+					has_state_flag = {
+						flag = normal_coring_@FROM
+						days >170
+					}
+				}
+			}
+		}
+		
+		every_state = {
+			limit = {
+				AND = {
+					is_controlled_by = FROM
+					has_state_flag = {
+						flag = normal_coring_@FROM
+						days >170
+					}
+				}
+			}
+			add_core_of = FROM
+			hidden_effect = {
+				add_state_modifier = { modifier = { local_non_core_manpower = -0.18 } }
+			}
+			clr_state_flag = integrated_by_@FROM
+			clr_state_flag = integ_bonus
+			clr_state_flag = normal_coring_@FROM
+		}
+		add_political_power = -10		
+	}
+	
+	option = {
+		name = cor_sta.4.a
+		
+		trigger = {
+			any_state = {
+				AND = {
+					is_controlled_by = FROM
+					has_state_flag = {
+						flag = slow_coring_@FROM
+						days >170
+					}
+				}
+			}
+		}
+		
+		every_state = {
+			limit = {
+				AND = {
+					is_controlled_by = FROM
+					has_state_flag = {
+						flag = slow_coring_@FROM
+						days >350
+					}
+				}
+			}
+			add_core_of = FROM
+			hidden_effect = {
+				add_state_modifier = { modifier = { local_non_core_manpower = -0.18 } }
+			}
+			clr_state_flag = integrated_by_@FROM
+			clr_state_flag = integ_bonus
+			clr_state_flag = slow_coring_@FROM
+		}
+	}
+}
+
+
+
+
+
